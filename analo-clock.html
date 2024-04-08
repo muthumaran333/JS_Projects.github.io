@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analog clock</title>
+    <link rel="icon" href="images/clock-logo.jpg" type="image/x-icon">
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: #081b29;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+      }
+
+      .wrapper {
+        position: relative;
+        width: 500px;
+        height: 500px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        animation: colorful 30s linear infinite;
+      }
+
+      /* alrem effects */
+      .alarm-active {
+        animation: glowing 1s infinite alternate,
+          colorEffect 2s infinite alternate;
+      }
+
+      @keyframes glowing {
+        0% {
+          background-color: red;
+          box-shadow: 0 0 10px red;
+        }
+        100% {
+          background-color: orange; /* Change to desired glowing color */
+          box-shadow: 0 0 20px orange; /* Adjust shadow size for a stronger glow */
+        }
+      }
+
+      @keyframes colorEffect {
+        0% {
+          filter: hue-rotate(0deg);
+        }
+        100% {
+          filter: hue-rotate(
+            360deg
+          ); /* Rotate through the entire color spectrum */
+        }
+      }
+
+      .alarm-active .hand.hours i,
+      .alarm-active .hand.minutes i,
+      .alarm-active .hand.seconds i {
+        animation: rotate 1s linear infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        100% {
+          transform: scale(1.1);
+        }
+      }
+
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes colorful {
+        100% {
+          filter: hue-rotate(360deg);
+        }
+      }
+
+      .bar.seconds,
+      .number-hours {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+      }
+
+      .bar.seconds span {
+        position: absolute;
+        transform: rotate(calc(var(--index) * 6deg));
+        inset: -20px;
+        text-align: center;
+      }
+
+      .bar.seconds span p {
+        display: inline-block;
+        width: 2px;
+        height: 12px;
+        background: #0ef;
+        border-radius: 2px;
+        box-shadow: 0 0 10px #0ef;
+      }
+
+      .bar.seconds span:nth-child(5n) p {
+        width: 6px;
+        height: 18px;
+        transform: translateY(1px);
+      }
+
+      .number-hours span {
+        position: absolute;
+        transform: rotate(calc(var(--index) * 30deg));
+        inset: 6px;
+        text-align: center;
+      }
+
+      .number-hours span p {
+        font-size: 52px;
+        color: #0ef;
+        text-shadow: 0 0 10px #0ef;
+        transform: rotate(calc(var(--index) * -30deg));
+      }
+
+      .hand-box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .hand-box .hand {
+        position: absolute;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+      }
+
+      .hand-box .hand i {
+        display: inline-block;
+        transform-origin: bottom;
+        border-radius: 50%;
+        box-shadow: 0 0 5px #0ef;
+      }
+
+      .hand.hours {
+        width: 320px;
+        height: 320px;
+      }
+
+      .hand.hours i {
+        width: 8px;
+        height: 160px;
+        background-color: #0ef;
+      }
+
+      .hand.minutes {
+        width: 450px;
+        height: 450px;
+      }
+
+      .hand.minutes::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 25px;
+        height: 25px;
+        background: #0ef;
+        border-radius: 50%;
+        box-shadow: 0 0 5px #0ef;
+      }
+
+      .hand.minutes i {
+        width: 8px;
+        height: 225px;
+        background-color: #0ef;
+      }
+
+      .hand.seconds {
+        width: 480px;
+        height: 480px;
+      }
+
+      .hand.seconds::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+      }
+
+      .hand.seconds i {
+        width: 4px;
+        height: calc(240px + 70px);
+        background-color: white;
+        box-shadow: none;
+      }
+
+      /* Text animation */
+      .clock-text {
+        position: absolute;
+        color: #0ef;
+        font-size: 24px;
+        text-align: center;
+        opacity: 0;
+        animation: textFadeIn 2s ease-in-out forwards;
+      }
+
+      @keyframes textFadeIn {
+        from {
+          opacity: 0;
+        }
+
+        to {
+          opacity: 1;
+        }
+      }
+
+
+      .clock-text-button {
+        position: absolute;
+        right: 10px;
+        bottom: 20px;
+        color: #0ef;
+        font-size: 24px;
+        text-align: center;
+        opacity: 0;
+        animation: textFadeIn 2s ease-in-out forwards;
+      }
+
+      .clock-text-button span img{
+        position: absolute;
+        bottom: 35px;      
+        right: 20px;
+        border-radius: 50%;
+        font-size: 30px;
+        width: 50px;
+      }
+      .timer-container {
+        text-align: center;
+        margin-top: 20px;
+        position: absolute;
+        left: 0;
+        right: 0;
+      }
+
+      .timerInput {
+        padding: 8px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-right: 5px;
+      }
+
+      .stopTimer,
+      .setTimer {
+        padding: 8px 16px;
+        font-size: 16px;
+        background-color: #0ef;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .setTimer:hover {
+        background-color: #09c;
+      }
+
+      /* Hide seconds hand when alarm is active */
+      .alarm-active .hand.seconds {
+        display: none;
+      }
+
+
+
+      /* Modal Styles */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1000; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.6); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.timer-container {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #fefefe;
+  margin: 5% auto; /* 5% from the top and centered */
+  padding: 20px;
+  border: none;
+  height: fit-content;
+  width: 80%; /* Could be more or less, depending on screen size */
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Drop shadow */
+}
+
+/* Close Button */
+.close {
+  color: #555;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 50px;
+}
+
+.close:hover,
+.close:focus {
+  color: #e9dede;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Timer Container */
+.timer-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.timerInput {
+  padding: 10px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 120px;
+}
+
+.setTimer,
+.stopTimer {
+  padding: 10px 20px;
+  cursor: pointer;
+  border: none;
+  background-color: #4caf50; /* Green */
+  color: white;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.setTimer:hover,
+.stopTimer:hover {
+  background-color: #45a049; /* Darker Green */
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  z-index: 999; /* Sit behind the modal */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Black w/ opacity */
+}
+
+
+.alarm-button{
+    position: relative;
+    left: 0;
+    right: 0;
+}
+
+
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="bar seconds"></div>
+      <div class="number-hours">
+        <div class="hand-box">
+          <div class="hand hours"><i></i></div>
+          <div class="hand minutes"><i></i></div>
+          <div class="hand seconds"><i></i></div>
+        </div>
+      </div>
+      <div class="clock-text" style="top: 20%; z-index: -1">TM</div>
+    </div>
+ <!-- Button to open the modal -->
+<div onclick="openModal()"  class="clock-text-button">
+  <span><img src="images/alarm.png" alt=""></span>Set Alarm</div>
+
+<!-- The Modal -->
+<!-- Modal Overlay -->
+<div id="modalOverlay" class="modal-overlay">
+<div id="myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div class="timer-container">
+        <input type="number" class="timerInput" placeholder="Set Time" />
+        <button class="setTimer" onclick="setAlarm()">SET</button>
+        <button class="stopTimer" onclick="clearAlarm()" style=" background-color: red;">STOP</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+    <!-- Define an audio element for the alarm sound -->
+    <audio id="alarmSound" src="alarm-car-or-home.mp3" preload="auto"></audio>
+
+    <script>
+const numberHours = document.querySelector(".number-hours");
+const barSeconds = document.querySelector(".bar.seconds");
+
+const numberElement = [];
+const barElement = [];
+for (let i = 1; i <= 12; i++) {
+  numberElement.push(`<span style="--index:${i};"><p>${i}</p></span>`);
+}
+numberHours.insertAdjacentHTML("afterbegin", numberElement.join(""));
+
+for (let i = 1; i <= 60; i++) {
+  barElement.push(`<span style="--index:${i};"><p></p></span>`);
+}
+barSeconds.insertAdjacentHTML("afterbegin", barElement.join(""));
+
+const handHours = document.querySelector(".hand.hours");
+const handMinutes = document.querySelector(".hand.minutes");
+const handSeconds = document.querySelector(".hand.seconds");
+
+function getCurrentTime() {
+  let date = new Date();
+  let currentHours = date.getHours();
+  let currentMinutes = date.getMinutes();
+  let currentSeconds = date.getSeconds();
+
+  handHours.style.transform = `rotate(${
+    currentHours * 30 + currentMinutes / 2
+  }deg)`;
+  handMinutes.style.transform = `rotate(${currentMinutes * 6}deg)`;
+  handSeconds.style.transform = `rotate(${currentSeconds * 6}deg)`;
+}
+
+getCurrentTime();
+
+setInterval(getCurrentTime, 1000);
+
+const timerInput = document.querySelector(".timerInput");
+const setTimerButton = document.querySelector(".setTimer");
+let alarmTimeout;
+
+setTimerButton.addEventListener("click", function () {
+  const timeInput = timerInput.value;
+  if (timeInput.trim() === "") {
+    alert("Please enter a valid time!");
+    return;
+  }
+  const timeInSeconds = parseInt(timeInput) * 1000; // converting seconds to milliseconds
+
+  alarmTimeout = setTimeout(function () {
+    // Play the alarm sound
+    const alarmSound = document.getElementById("alarmSound");
+    alarmSound.play();
+    document.querySelector(".wrapper").classList.add("alarm-active");
+    closeModal();
+  }, timeInSeconds);
+});
+
+// Function to clear the alarm timeout and stop the alarm sound
+function clearAlarm() {
+  clearTimeout(alarmTimeout);
+  const alarmSound = document.getElementById("alarmSound");
+  alarmSound.pause();
+  alarmSound.currentTime = 0; // Reset audio to the beginning
+  document.querySelector(".wrapper").classList.remove("alarm-active");
+}
+
+// Add event listener to clear the alarm on window focus
+window.addEventListener("focus", clearAlarm);
+
+// Function to open the modal
+function openModal() {
+  document.getElementById("myModal").style.display = "block";
+  document.getElementById("modalOverlay").style.display = "block";
+}
+
+// Function to close the modal
+function closeModal() {
+  document.getElementById("myModal").style.display = "none";
+  document.getElementById("modalOverlay").style.display = "none";
+}
+
+// Function to set the alarm
+function setAlarm() {
+  const timeInput = document.querySelector(".timerInput").value;
+  if (timeInput.trim() === "") {
+    alert("Please enter a valid time!");
+    return;
+  }
+  const timeInSeconds = parseInt(timeInput) * 1000; // converting seconds to milliseconds
+
+  alarmTimeout = setTimeout(function () {
+    // Play the alarm sound
+    const alarmSound = document.getElementById("alarmSound");
+    alarmSound.play();
+    document.querySelector(".wrapper").classList.add("alarm-active");
+    closeModal();
+  }, timeInSeconds);
+}
+
+      // Add event listener to clear the alarm on window focus
+      window.addEventListener("focus", clearAlarm);
+    
+
+    </script>
+  </body>
+</html>
