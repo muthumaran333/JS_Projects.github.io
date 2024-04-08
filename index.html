@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User List</title>
+</head>
+<body>
+
+<h2>User List</h2>
+<ul id="userList"></ul>
+
+<script>
+  // Array of user objects
+  const users = [
+    { name: "John Doe", email: "john@example.com" },
+    { name: "Alice Smith", email: "alice@example.com" },
+    { name: "Bob Johnson", email: "bob@example.com" }
+  ];
+
+  // Function to display user list
+  function displayUserList() {
+    const userList = document.getElementById("userList");
+
+    // Loop through the array of users
+    for (let i = 0; i < users.length; i++) {
+      const user = users[i];
+      // Create a new list item and set its text
+      // Create list item
+      const listItem = document.createElement("li");
+
+      // Set innerHTML of list item with user's name and email
+      listItem.innerHTML = `<strong>Name:</strong> ${user.name}<br><strong>Email:</strong> ${user.email}`;
+
+      // Append list item to the user list
+      userList.appendChild(listItem);
+    }
+  }
+
+  // Call the function to display user list when the page loads
+  displayUserList();
+</script>
+
+</body>
+</html>
