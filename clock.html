@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Clock</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            padding-top: 50px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #digitalClock {
+            font-size: 3em;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .additional-content {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #777;
+        }
+
+        select {
+            font-size: 1em;
+            padding: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Real-Time Clock</h1>
+    <p id="digitalClock">00:00:00</p>
+
+    <div class="additional-content">
+        <label for="format">Select Clock Format:</label>
+        <select id="format">
+            <option value="12">12-hour Format</option>
+            <option value="24">24-hour Format</option>
+        </select>
+        
+        <label for="timezone">Select Timezone:</label>
+        <select id="timezone">
+            <option value="local">Local Time</option>
+            <option value="utc">UTC Time</option>
+            <option value="gmt-5">GMT-5 (Eastern Time)</option>
+            <option value="gmt-8">GMT-8 (Pacific Time)</option>
+        </select>
+    </div>
+
+
+    <div class="EmailVerification">
+        <input type="text" id="emailInput" placeholder="Enter your mailId">
+        <P id="Verification"></P>
+    </div>
+
+
+
+    
+    <script>
+//Email verification
+
+var emailInput =  document.getElementById('emailInput');
+emailInput.addEventListener('input',function(){
+    var email = emailInput.value.trim();
+    if(email == ''){
+        document.getElementById( 'Verification' ).innerHTML = '';
+
+    }
+    else {
+        updateValidation(email);
+    }
+})
+
+
+
+var emailRegEx = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+ function Validation(email){
+return emailRegEx.test(email);
+ }
+ function  updateValidation(email){
+    var validationMessage = document.getElementById( 'Verification' );
+    if (Validation(email)) {
+        validationMessage.textContent = " valid email address";
+        validationMessage.className = " valid";
+       
+ }
+ else {
+    validationMessage.textContent="Invalid email address";
+    validationMessage.className ="invalid";
+ }}
+ let arr = ["a", "b", "c"];
+
+// Accessing element at index 1
+console.log("Using []:", arr[1]); // Output: b
+console.log("Using at():", arr.at(1)); // Output: b
+
+// Trying to access an out-of-range index
+console.log("Using [] (out of range):", arr[5]); // Output: undefined
+try {
+    console.log("Using at() (out of range):", arr.at(5)); // This will throw an error
+} catch (error) {
+    console.error("Error using at():", error.message); // Output: Error using at(): Index out of range
+}
+
+
+
+ //  create account button click event handler
+        function updateClock() {
+            const now = new Date();
+            const format = document.getElementById("format").value;
+            const timezone = document.getElementById("timezone").value;
+
+            let hours, minutes, seconds;
+
+            if (timezone === "utc") {
+                hours = String(now.getUTCHours()).padStart(2, '0');
+                minutes = String(now.getUTCMinutes()).padStart(2, '0');
+                seconds = String(now.getUTCSeconds()).padStart(2, '0');
+            } else if (timezone.startsWith("gmt")) {
+                const offset = parseInt(timezone.split("gmt")[1]);
+                const utcHours = now.getUTCHours() + offset;
+                hours = String((utcHours + 24) % 24).padStart(2, '0');
+                minutes = String(now.getUTCMinutes()).padStart(2, '0');
+                seconds = String(now.getUTCSeconds()).padStart(2, '0');
+            } else {
+                hours = String(now.getHours() % (format === "12" ? 12 : 24)).padStart(2, '0');
+                minutes = String(now.getMinutes()).padStart(2, '0');
+                seconds = String(now.getSeconds()).padStart(2, '0');
+            }
+
+            const timeString = hours + ':' + minutes + ':' + seconds;
+            document.getElementById("digitalClock").innerText = timeString;
+        }
+
+        // Update the clock every second
+        const intervalId = setInterval(updateClock, 1000);
+
+    </script>
+</body>
+</html>
+

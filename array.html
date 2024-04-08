@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>JavaScript Arrays</h1>
+<input type="text" id="input" placeholder="Enter a number">
+<button onclick="addToArray()">Add to Array</button>
+<button onclick="calculateSum()">Calculate Sum</button>
+<p id="demo"></p>
+<p id="demo1"></p>
+<script>
+// Array to store numbers
+const numbersArray = [];
+
+// Function to add number to the array
+function addToArray() {
+  var inputValue = document.getElementById('input').value;
+ 
+  // Check if input is a valid number
+  if (!isNaN(inputValue) && inputValue !== "") {
+    // Add number to array
+    numbersArray.push(parseFloat(inputValue));
+   
+    // Clear input field
+    document.getElementById('input').value = "";
+   
+    // Display array content
+    displayArray();
+  } else {
+    // Display error message
+    document.getElementById('demo').innerHTML = "Please enter a valid number.";
+  }
+}
+
+// Function to calculate sum of numbers in the array
+function calculateSum() {
+  // Calculate sum
+  var sum = numbersArray.reduce((total, num) => total + num, 0);
+ 
+  // Display sum
+  document.getElementById('demo').innerHTML = "Sum: " + sum;
+}
+
+// Function to display numbers in the array
+function displayArray() {
+  document.getElementById('demo1').innerHTML = "Array: " + numbersArray.sort(function(a, b){return b-a});
+}
+
+
+</script>
+</body>
+</html>
